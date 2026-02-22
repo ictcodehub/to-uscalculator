@@ -12,185 +12,232 @@
             --bg-light: #f1f5f9;
         }
 
+        body, html {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             background-color: var(--bg-light);
             font-family: 'Inter', 'Segoe UI', sans-serif;
             color: #1e293b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        /* Container utama */
+        .app-wrapper {
+            width: 100%;
+            max-width: 500px;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            justify-content: center;
+        }
+
+        @media (min-height: 750px) {
+            .app-wrapper {
+                min-height: auto;
+            }
+        }
+
+        /* Dashboard yang lebih tinggi dan mencolok */
         .dashboard-card {
             background: linear-gradient(135deg, var(--navy-blue) 0%, #1e40af 100%);
             color: white;
-            border-radius: 1rem;
-            box-shadow: 0 10px 15px -3px rgba(30, 58, 138, 0.3);
+            border-radius: 1.25rem;
+            box-shadow: 0 15px 25px -5px rgba(30, 58, 138, 0.4);
+            padding: 2.5rem 1rem; /* Padding lebih besar untuk meninggikan dashboard */
         }
 
         .input-card {
             background: white;
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
         }
 
         .input-group label {
             display: block;
-            font-weight: 600;
-            font-size: 0.75rem;
+            font-weight: 700;
+            font-size: 0.7rem;
             margin-bottom: 0.35rem;
             color: var(--navy-blue);
             text-transform: uppercase;
-            letter-spacing: 0.025em;
+            letter-spacing: 0.05em;
         }
 
         .input-field {
             width: 100%;
-            padding: 0.6rem;
+            padding: 0.6rem 0.75rem;
             border: 2px solid #e2e8f0;
-            border-radius: 0.5rem;
+            border-radius: 0.6rem;
             transition: all 0.2s;
             outline: none;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-align: center;
         }
 
         .input-field:focus {
             border-color: var(--navy-blue);
             background-color: #f8fafc;
+            transform: scale(1.02);
         }
 
         /* Error state styling */
         .input-field.error {
             border-color: #ef4444;
             background-color: #fef2f2;
-            animation: shake 0.2s ease-in-out;
+            animation: shake 0.25s ease-in-out;
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-4px); }
-            75% { transform: translateX(4px); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
 
         .reset-btn {
             background-color: #ef4444;
             color: white;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            font-weight: 600;
+            padding: 0.85rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
             transition: all 0.2s;
             width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
         }
 
         .reset-btn:hover {
             background-color: #dc2626;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px -1px rgba(239, 68, 68, 0.4);
         }
 
         .badge-info {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--slate-grey);
-            font-weight: normal;
+            font-weight: 500;
             display: block;
-            margin-top: 0.2rem;
+            margin-top: 0.25rem;
+            text-align: center;
         }
 
         .msg-error {
             color: #ef4444;
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             position: absolute;
-            bottom: -1.1rem;
+            bottom: -1rem;
             left: 0;
+            right: 0;
+            text-align: center;
             display: none;
+            font-weight: bold;
         }
 
         .relative-box {
             position: relative;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
         }
     </style>
 </head>
-<body class="p-4 md:p-6">
+<body>
 
-    <div class="max-w-2xl mx-auto">
-        <!-- Header Ringkas -->
+    <div class="app-wrapper">
+        <!-- Header -->
         <header class="mb-4 text-center">
-            <h1 class="text-xl font-bold text-blue-900">Kalkulator Nilai TO & US</h1>
+            <h1 class="text-xl font-bold text-blue-900 tracking-tight">Kalkulator Nilai TO & US</h1>
         </header>
 
-        <!-- DASHBOARD UTAMA (Di Atas) -->
-        <div class="dashboard-card p-4 mb-4 flex items-center justify-around">
+        <!-- DASHBOARD UTAMA (Ditinggikan) -->
+        <div class="dashboard-card mb-4 flex items-center justify-around">
             <div class="text-center">
-                <p class="text-blue-200 text-xs uppercase font-bold tracking-wider">Nilai Akhir</p>
-                <div id="finalScore" class="text-5xl font-black">0.00</div>
+                <p class="text-blue-200 text-xs uppercase font-bold tracking-widest mb-2">Nilai Akhir</p>
+                <div id="finalScore" class="text-7xl font-black leading-none">0.00</div>
             </div>
-            <div class="h-12 w-px bg-blue-400/30"></div>
+            <div class="h-16 w-px bg-blue-300/20"></div>
             <div class="text-center">
-                <p class="text-blue-200 text-xs uppercase font-bold tracking-wider">Total Poin</p>
-                <div class="text-2xl font-bold"><span id="totalPoints">0</span> <span class="text-lg font-normal text-blue-300">/ 60</span></div>
+                <p class="text-blue-200 text-xs uppercase font-bold tracking-widest mb-2">Total Poin</p>
+                <div class="text-3xl font-bold leading-none">
+                    <span id="totalPoints">0</span> 
+                    <span class="text-base font-medium text-blue-300">/ 60</span>
+                </div>
             </div>
         </div>
 
         <!-- INPUT PANEL -->
         <div class="input-card p-5">
             <form id="calcForm" oninput="calculateScore()">
-                <div class="grid grid-cols-2 gap-x-6 gap-y-2">
+                <div class="grid grid-cols-2 gap-x-6 gap-y-1">
                     
-                    <!-- Kolom 1 -->
                     <div class="relative-box">
-                        <label for="pg">Pilihan Ganda</label>
-                        <input type="number" id="pg" data-max="5" placeholder="Benar" class="input-field">
-                        <span class="badge-info">Max: 5 soal (1pt)</span>
+                        <label for="pg">Pil. Ganda</label>
+                        <input type="number" id="pg" data-max="5" placeholder="0" class="input-field">
+                        <span class="badge-info">Max: 5 (1pt)</span>
                         <p id="err-pg" class="msg-error">Max 5!</p>
                     </div>
 
-                    <!-- Kolom 2 -->
                     <div class="relative-box">
-                        <label for="pgk">PG Kompleks</label>
-                        <input type="number" id="pgk" data-max="10" placeholder="Benar" class="input-field">
-                        <span class="badge-info">Max: 10 soal (1pt)</span>
+                        <label for="pgk">PG Komp.</label>
+                        <input type="number" id="pgk" data-max="10" placeholder="0" class="input-field">
+                        <span class="badge-info">Max: 10 (1pt)</span>
                         <p id="err-pgk" class="msg-error">Max 10!</p>
                     </div>
 
                     <div class="relative-box">
-                        <label for="bs">Benar / Salah</label>
-                        <input type="number" id="bs" data-max="5" placeholder="Benar" class="input-field">
-                        <span class="badge-info">Max: 5 soal (1pt)</span>
+                        <label for="bs">Benar/Salah</label>
+                        <input type="number" id="bs" data-max="5" placeholder="0" class="input-field">
+                        <span class="badge-info">Max: 5 (1pt)</span>
                         <p id="err-bs" class="msg-error">Max 5!</p>
                     </div>
 
                     <div class="relative-box">
                         <label for="match">Menjodohkan</label>
-                        <input type="number" id="match" data-max="5" placeholder="Benar" class="input-field">
-                        <span class="badge-info">Max: 5 soal (1pt)</span>
+                        <input type="number" id="match" data-max="5" placeholder="0" class="input-field">
+                        <span class="badge-info">Max: 5 (1pt)</span>
                         <p id="err-match" class="msg-error">Max 5!</p>
                     </div>
 
                     <div class="relative-box">
-                        <label for="isian">Isian Singkat</label>
-                        <input type="number" id="isian" data-max="10" placeholder="Benar" class="input-field">
-                        <span class="badge-info">Max: 10 soal (2pt)</span>
+                        <label for="isian">Isian Skt.</label>
+                        <input type="number" id="isian" data-max="10" placeholder="0" class="input-field">
+                        <span class="badge-info">Max: 10 (2pt)</span>
                         <p id="err-isian" class="msg-error">Max 10!</p>
                     </div>
 
                     <div class="relative-box">
                         <label for="uraian">Poin Uraian</label>
-                        <input type="number" id="uraian" placeholder="Poin" class="input-field">
+                        <input type="number" id="uraian" placeholder="0" class="input-field">
                         <span class="badge-info">Max Skor: 15</span>
                         <p id="err-uraian" class="msg-error">Max 15!</p>
                     </div>
 
                 </div>
 
-                <div class="mt-6">
-                    <button type="button" onclick="resetForm()" class="reset-btn flex items-center justify-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="mt-4">
+                    <button type="button" onclick="resetForm()" class="reset-btn text-base">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
-                        Reset Data
+                        Mulai Ulang Kalkulasi
                     </button>
                 </div>
             </form>
         </div>
 
-        <footer class="mt-4 text-center text-slate-400 text-[10px] uppercase tracking-widest">
+        <footer class="mt-6 text-center text-slate-400 text-[10px] uppercase tracking-[0.2em] font-semibold">
             Rumus: (Total Poin / 60) × 100
         </footer>
     </div>
@@ -221,24 +268,29 @@
         }
 
         function calculateScore() {
-            // Ambil data-max dari atribut atau tentukan manual
             const pg = validateInput('pg', 5);
             const pgk = validateInput('pgk', 10);
             const bs = validateInput('bs', 5);
             const match = validateInput('match', 5);
             const isian = validateInput('isian', 10);
-            const uraian = validateInput('uraian', 15);
+            
+            // Khusus Uraian limit manual
+            let uraianInput = document.getElementById('uraian');
+            let uraian = parseFloat(uraianInput.value) || 0;
+            if (uraian > 15) {
+                uraianInput.value = 15;
+                uraian = 15;
+                document.getElementById('err-uraian').style.display = 'block';
+                setTimeout(() => document.getElementById('err-uraian').style.display = 'none', 1500);
+            }
 
-            // Hitung Total Poin
-            // Isian Singkat memiliki bobot 2 per soal
             const totalPoin = (pg * 1) + (pgk * 1) + (bs * 1) + (match * 1) + (isian * 2) + (uraian);
-
-            // Hitung Nilai Akhir (Max Poin 60)
             const maxTotalPoin = 60;
             const nilaiAkhir = (totalPoin / maxTotalPoin) * 100;
 
-            // Update Tampilan Dashboard
             document.getElementById('totalPoints').innerText = totalPoin;
+            
+            // Animasi angka sederhana
             document.getElementById('finalScore').innerText = nilaiAkhir.toFixed(2);
         }
 
@@ -256,7 +308,6 @@
             document.getElementById('finalScore').innerText = '0.00';
         }
 
-        // Jalankan kalkulasi awal
         window.onload = calculateScore;
     </script>
 </body>
