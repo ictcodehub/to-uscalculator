@@ -3,7 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kalkulator Nilai Try Out & US</title>
+    <title>Kalkulator Nilai TO & US</title>
+    
+    <!-- PWA Meta Tags & Ikon -->
+    <meta name="theme-color" content="#1e3a8a">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kalkulator Nilai">
+    
+    <!-- Ikon Aplikasi Baru (Exam/Answers Icon) -->
+    <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/2080/2080709.png">
+    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/2080/2080709.png">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -26,7 +38,6 @@
             justify-content: center;
         }
 
-        /* Container utama */
         .app-wrapper {
             width: 100%;
             max-width: 500px;
@@ -43,13 +54,12 @@
             }
         }
 
-        /* Dashboard yang lebih tinggi dan mencolok */
         .dashboard-card {
             background: linear-gradient(135deg, var(--navy-blue) 0%, #1e40af 100%);
             color: white;
             border-radius: 1.25rem;
             box-shadow: 0 15px 25px -5px rgba(30, 58, 138, 0.4);
-            padding: 2.5rem 1rem; /* Padding lebih besar untuk meninggikan dashboard */
+            padding: 2.5rem 1rem;
         }
 
         .input-card {
@@ -86,7 +96,6 @@
             transform: scale(1.02);
         }
 
-        /* Error state styling */
         .input-field.error {
             border-color: #ef4444;
             background-color: #fef2f2;
@@ -114,10 +123,26 @@
             box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.3);
         }
 
-        .reset-btn:hover {
-            background-color: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 10px -1px rgba(239, 68, 68, 0.4);
+        #pwaInstallBtn {
+            display: none;
+            background-color: #10b981;
+            color: white;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+            40% {transform: translateY(-5px);}
+            60% {transform: translateY(-3px);}
         }
 
         .badge-info {
@@ -156,12 +181,21 @@
 <body>
 
     <div class="app-wrapper">
-        <!-- Header -->
         <header class="mb-4 text-center">
-            <h1 class="text-xl font-bold text-blue-900 tracking-tight">Kalkulator Nilai TO & US</h1>
+            <div class="flex items-center justify-center gap-2 mb-1">
+                <img src="https://cdn-icons-png.flaticon.com/512/2080/2080709.png" alt="Exam Icon" class="w-8 h-8">
+                <h1 class="text-xl font-bold text-blue-900 tracking-tight">Kalkulator Nilai TO & US</h1>
+            </div>
         </header>
 
-        <!-- DASHBOARD UTAMA (Ditinggikan) -->
+        <!-- Tombol Install Otomatis -->
+        <button id="pwaInstallBtn" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Instal Aplikasi
+        </button>
+
         <div class="dashboard-card mb-4 flex items-center justify-around">
             <div class="text-center">
                 <p class="text-blue-200 text-xs uppercase font-bold tracking-widest mb-2">Nilai Akhir</p>
@@ -177,11 +211,9 @@
             </div>
         </div>
 
-        <!-- INPUT PANEL -->
         <div class="input-card p-5">
             <form id="calcForm" oninput="calculateScore()">
                 <div class="grid grid-cols-2 gap-x-6 gap-y-1">
-                    
                     <div class="relative-box">
                         <label for="pg">Pil. Ganda</label>
                         <input type="number" id="pg" data-max="5" placeholder="0" class="input-field">
@@ -223,7 +255,6 @@
                         <span class="badge-info">Max Skor: 15</span>
                         <p id="err-uraian" class="msg-error">Max 15!</p>
                     </div>
-
                 </div>
 
                 <div class="mt-4">
@@ -243,6 +274,26 @@
     </div>
 
     <script>
+        let deferredPrompt;
+        const installBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installBtn.style.display = 'flex';
+        });
+
+        installBtn.addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                deferredPrompt = null;
+                installBtn.style.display = 'none';
+            } else {
+                alert("Instalasi manual:\n\nChrome/Android: Klik titik tiga > Tambahkan ke Layar Utama.\niPhone: Klik Share > Add to Home Screen.");
+            }
+        });
+
         function validateInput(id, maxVal) {
             const input = document.getElementById(id);
             const errMsg = document.getElementById('err-' + id);
@@ -252,18 +303,15 @@
                 input.value = maxVal;
                 input.classList.add('error');
                 if (errMsg) errMsg.style.display = 'block';
-                
                 setTimeout(() => {
                     input.classList.remove('error');
                     if (errMsg) errMsg.style.display = 'none';
                 }, 1500);
-                
                 return maxVal;
             } else if (val < 0) {
                 input.value = 0;
                 return 0;
             }
-            
             return isNaN(val) ? 0 : val;
         }
 
@@ -274,7 +322,6 @@
             const match = validateInput('match', 5);
             const isian = validateInput('isian', 10);
             
-            // Khusus Uraian limit manual
             let uraianInput = document.getElementById('uraian');
             let uraian = parseFloat(uraianInput.value) || 0;
             if (uraian > 15) {
@@ -289,8 +336,6 @@
             const nilaiAkhir = (totalPoin / maxTotalPoin) * 100;
 
             document.getElementById('totalPoints').innerText = totalPoin;
-            
-            // Animasi angka sederhana
             document.getElementById('finalScore').innerText = nilaiAkhir.toFixed(2);
         }
 
@@ -300,10 +345,8 @@
                 input.value = '';
                 input.classList.remove('error');
             });
-            
             const errors = document.querySelectorAll('.msg-error');
             errors.forEach(err => err.style.display = 'none');
-            
             document.getElementById('totalPoints').innerText = '0';
             document.getElementById('finalScore').innerText = '0.00';
         }
