@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Nilai Try Out & US</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --navy-blue: #1e3a8a;
+            --slate-grey: #64748b;
+            --bg-light: #f8fafc;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #1e293b;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+            color: var(--navy-blue);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: var(--navy-blue);
+        }
+
+        /* Error state styling */
+        .input-field.error {
+            border-color: #ef4444;
+            background-color: #fef2f2;
+            animation: shake 0.2s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-4px); }
+            75% { transform: translateX(4px); }
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, var(--navy-blue) 0%, #1e40af 100%);
+            color: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .reset-btn {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .reset-btn:hover {
+            background-color: #dc2626;
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            background: #f1f5f9;
+            border-radius: 0.25rem;
+            color: var(--slate-grey);
+            font-weight: normal;
+        }
+
+        .msg-error {
+            color: #ef4444;
+            font-size: 0.7rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-2xl mx-auto">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-blue-900 mb-2">Kalkulator Nilai TO & US</h1>
+            <p class="text-slate-500">Hitung skor ujian secara otomatis dengan bobot poin presisi.</p>
+        </header>
+
+        <div class="card p-6 md:p-8">
+            <form id="calcForm" oninput="calculateScore()">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <div class="input-group">
+                        <label>Pilihan Ganda <span class="badge">Max: 5 Soal</span></label>
+                        <input type="number" id="pg" data-max="5" placeholder="Jml Benar" class="input-field">
+                        <p id="err-pg" class="msg-error">Maksimal 5 soal!</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>PG Kompleks <span class="badge">Max: 10 Soal</span></label>
+                        <input type="number" id="pgk" data-max="10" placeholder="Jml Benar" class="input-field">
+                        <p id="err-pgk" class="msg-error">Maksimal 10 soal!</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Benar / Salah <span class="badge">Max: 5 Soal</span></label>
+                        <input type="number" id="bs" data-max="5" placeholder="Jml Benar" class="input-field">
+                        <p id="err-bs" class="msg-error">Maksimal 5 soal!</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Menjodohkan <span class="badge">Max: 5 Soal</span></label>
+                        <input type="number" id="match" data-max="5" placeholder="Jml Benar" class="input-field">
+                        <p id="err-match" class="msg-error">Maksimal 5 soal!</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Isian Singkat <span class="badge">Max: 10 Soal</span></label>
+                        <input type="number" id="isian" data-max="10" placeholder="Jml Benar" class="input-field">
+                        <p id="err-isian" class="msg-error">Maksimal 10 soal!</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Uraian <span class="badge">Max Poin: 15</span></label>
+                        <input type="number" id="uraian" min="0" max="15" placeholder="Total Poin (0-15)" class="input-field">
+                    </div>
+
+                </div>
+
+                <hr class="my-8 border-slate-100">
+
+                <div class="result-box mb-6">
+                    <p class="text-blue-200 uppercase tracking-widest text-sm font-semibold mb-2">Nilai Akhir</p>
+                    <div id="finalScore" class="text-6xl font-black mb-2">0.00</div>
+                    <p class="text-blue-100 text-sm">Total Poin: <span id="totalPoints">0</span> / 60</p>
+                </div>
+
+                <button type="button" onclick="resetForm()" class="reset-btn">
+                    Reset Semua Data
+                </button>
+            </form>
+        </div>
+
+        <footer class="mt-8 text-center text-slate-400 text-xs">
+            <p>Rumus: (Total Poin / 60) × 100</p>
+        </footer>
+    </div>
+
+    <script>
+        function validateInput(id) {
+            const input = document.getElementById(id);
+            const errMsg = document.getElementById('err-' + id);
+            const maxVal = parseInt(input.getAttribute('data-max'));
+            let val = parseFloat(input.value);
+
+            if (val > maxVal) {
+                // Tindakan preventif: Langsung ubah ke nilai maksimal
+                input.value = maxVal;
+                input.classList.add('error');
+                if (errMsg) errMsg.style.display = 'block';
+                
+                // Hilangkan efek error setelah 2 detik
+                setTimeout(() => {
+                    input.classList.remove('error');
+                    if (errMsg) errMsg.style.display = 'none';
+                }, 2000);
+                
+                return maxVal;
+            } else if (val < 0) {
+                input.value = 0;
+                return 0;
+            }
+            
+            return isNaN(val) ? 0 : val;
+        }
+
+        function calculateScore() {
+            // Validasi dan ambil nilai secara preventif
+            const pg = validateInput('pg');
+            const pgk = validateInput('pgk');
+            const bs = validateInput('bs');
+            const match = validateInput('match');
+            const isian = validateInput('isian');
+            
+            // Uraian tidak menggunakan auto-correct ketat karena inputnya poin (0-15)
+            let uraian = parseFloat(document.getElementById('uraian').value) || 0;
+            if (uraian > 15) {
+                document.getElementById('uraian').value = 15;
+                uraian = 15;
+            } else if (uraian < 0) {
+                document.getElementById('uraian').value = 0;
+                uraian = 0;
+            }
+
+            // Hitung Total Poin
+            const totalPoin = (pg * 1) + (pgk * 1) + (bs * 1) + (match * 1) + (isian * 2) + (uraian);
+
+            // Hitung Nilai Akhir
+            const maxPoin = 60;
+            const nilaiAkhir = (totalPoin / maxPoin) * 100;
+
+            // Update UI
+            document.getElementById('totalPoints').innerText = totalPoin.toFixed(0);
+            document.getElementById('finalScore').innerText = nilaiAkhir.toFixed(2);
+        }
+
+        function resetForm() {
+            const inputs = document.querySelectorAll('.input-field');
+            inputs.forEach(input => {
+                input.value = '';
+                input.classList.remove('error');
+            });
+            
+            const errors = document.querySelectorAll('.msg-error');
+            errors.forEach(err => err.style.display = 'none');
+            
+            document.getElementById('totalPoints').innerText = '0';
+            document.getElementById('finalScore').innerText = '0.00';
+        }
+
+        window.onload = calculateScore;
+    </script>
+</body>
+</html>
